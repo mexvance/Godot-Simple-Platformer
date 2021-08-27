@@ -10,6 +10,9 @@ var motion = Vector2()
 
 func _physics_process(delta):
 	var friction = false
+	#Note that jump_motion is probably not the right way
+	#to handle the direction the wall is facing to set the "bounce"
+	#of the character off the wall, refactor?
 	var jump_motion = ""
 	motion.y += GRAVITY
 		
