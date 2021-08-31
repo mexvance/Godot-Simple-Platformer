@@ -8,6 +8,8 @@ const JUMP_HEIGHT = -550
 const WALL_JUMP_HEIGHT = -355
 var motion = Vector2()
 
+const FIREBALL = preload("res://Fireball.tscn")
+
 func _physics_process(delta):
 	var friction = false
 	#Note that jump_motion is probably not the right way
@@ -53,8 +55,15 @@ func _physics_process(delta):
 					motion.x = -600
 				else:
 					motion.x = 600
-
+	#Fireball Creation
+	if Input.is_action_just_pressed("ui_focus_next"):
+		var fireball = FIREBALL.instance()
+		get_parent().add_child(fireball)
+		fireball.position = $Position2D.global_position
+		fireball.SPEED = fireball.SPEED * -1
 	motion = move_and_slide(motion, UP)
+
+	
 
 export(String, FILE, "*.tscn") var world_scene
 	

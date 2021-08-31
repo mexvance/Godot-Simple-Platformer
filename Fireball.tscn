@@ -18,6 +18,7 @@ animations = [ {
 extents = Vector2( 32, 32 )
 
 [node name="Fireball" type="Area2D"]
+scale = Vector2( 0.3, 0.3 )
 script = ExtResource( 5 )
 __meta__ = {
 "_edit_group_": true
@@ -30,3 +31,7 @@ frame = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 2 )
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
+
+[connection signal="screen_exited" from="VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
