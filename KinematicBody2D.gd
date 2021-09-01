@@ -8,10 +8,13 @@ const JUMP_HEIGHT = -550
 const WALL_JUMP_HEIGHT = -450
 const WALL_SLIDE_AMT = 50
 var motion = Vector2()
+var attacking = false
 
 const FIREBALL = preload("res://Fireball.tscn")
 
+
 func _physics_process(delta):
+
 	var friction = false
 	var on_wall = false
 	#Note that jump_motion is probably not the right way
@@ -19,35 +22,45 @@ func _physics_process(delta):
 	#of the character off the wall, refactor?
 	var jump_motion = ""
 	
+	
 	motion.y += GRAVITY
 		
 	if Input.is_action_pressed("ui_right"):
-		jump_motion = "right"
-		$Sprite.flip_h = false
-		motion.x = min(motion.x + ACCELERATION,MAX_SPEED)
-		$Sprite.play('Run')
+		if attacking == false:
+			jump_motion = "right"
+			$Sprite.flip_h = false
+			motion.x = min(motion.x + ACCELERATION,MAX_SPEED)
+			if sign($Position2D.position.x) == -1:
+				$Position2D.position.x *= -1
+			$Sprite.play('Run')
 	elif Input.is_action_pressed("ui_left"):
-		jump_motion = "left"
-		$Sprite.flip_h = true
-		motion.x -= ACCELERATION
-		motion.x = max(motion.x - ACCELERATION,-MAX_SPEED)
-		$Sprite.play('Run')
+		if attacking == false:
+			jump_motion = "left"
+			$Sprite.flip_h = true
+			motion.x -= ACCELERATION
+			motion.x = max(motion.x - ACCELERATION,-MAX_SPEED)
+			if sign($Position2D.position.x) == 1:
+				$Position2D.position.x *= -1
+			$Sprite.play('Run')
 	else:
 		friction = true
-		$Sprite.play('Idle')
+		if attacking == false:
+			$Sprite.play('Idle')
 	
 	if is_on_floor():
 		if Input.is_action_just_pressed("ui_up"):
-			motion.y = JUMP_HEIGHT
+			if attacking == false:
+				motion.y = JUMP_HEIGHT
 		if friction == true:
 			motion.x = lerp(motion.x,0,.2)
 	else:
 		#if Input.is_action_just_pressed("ui_up"):
 		#	motion.y = JUMP_HEIGHT
-		if motion.y < 0:
-			$Sprite.play('Jump')
-		else:
-			$Sprite.play('Fall')
+		if attacking == false:
+			if motion.y < 0:
+				$Sprite.play('Jump')
+			else:
+				$Sprite.play('Fall')
 		if friction == true:
 			motion.x = lerp(motion.x,0,.05)
 			
@@ -62,12 +75,16 @@ func _physics_process(delta):
 					motion.x = -600
 				else:
 					motion.x = 600
+					
 
 		
 		
 	#Fireball Creation
-	if Input.is_action_just_pressed("ui_focus_next"):
+	if Input.is_action_just_pressed("ui_focus_next") && attacking == false && on_wall == false:
+		attacking = true
 		var fireball = FIREBALL.instance()
+		$Sprite.play("Shoot")
+		fireball.set_fireball_direction(sign($Position2D.position.x))
 		get_parent().add_child(fireball)
 		fireball.position = $Position2D.global_position
 		
@@ -82,3 +99,7 @@ func _on_Checkpoint_body_entered(body):
 	if body.name == "Player":
 		get_tree().change_scene(world_scene)
 	pass
+
+
+func _on_Sprite_animation_finished():
+	attacking = false
