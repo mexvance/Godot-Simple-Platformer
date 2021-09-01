@@ -10,6 +10,7 @@ var motion = Vector2()
 
 func _physics_process(delta):
 	var friction = false
+	var frictiony = true
 	#Note that jump_motion is probably not the right way
 	#to handle the direction the wall is facing to set the "bounce"
 	#of the character off the wall, refactor?
@@ -47,6 +48,8 @@ func _physics_process(delta):
 			motion.x = lerp(motion.x,0,.05)
 			
 		if is_on_wall():
+			if friction == true:
+				motion.y = lerp(motion.y,0,.2)
 			if Input.is_action_just_pressed("ui_up"):
 				motion.y = WALL_JUMP_HEIGHT
 				if jump_motion == "right":
