@@ -82,6 +82,8 @@ func _physics_process(delta):
 	#Fireball Creation
 	if Input.is_action_just_pressed("ui_focus_next") && attacking == false && on_wall == false:
 		attacking = true
+		if is_on_floor():
+			motion.x = 0
 		var fireball = FIREBALL.instance()
 		$Sprite.play("Shoot")
 		fireball.set_fireball_direction(sign($Position2D.position.x))
