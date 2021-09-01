@@ -5,18 +5,20 @@ const GRAVITY = 20
 const ACCELERATION = 50
 const MAX_SPEED = 200
 const JUMP_HEIGHT = -550
-const WALL_JUMP_HEIGHT = -355
+const WALL_JUMP_HEIGHT = -450
+const WALL_SLIDE_AMT = 50
 var motion = Vector2()
 
 const FIREBALL = preload("res://Fireball.tscn")
 
 func _physics_process(delta):
 	var friction = false
-	var frictiony = true
+	var on_wall = false
 	#Note that jump_motion is probably not the right way
 	#to handle the direction the wall is facing to set the "bounce"
 	#of the character off the wall, refactor?
 	var jump_motion = ""
+	
 	motion.y += GRAVITY
 		
 	if Input.is_action_pressed("ui_right"):
@@ -50,20 +52,25 @@ func _physics_process(delta):
 			motion.x = lerp(motion.x,0,.05)
 			
 		if is_on_wall():
-			if friction == true:
-				motion.y = lerp(motion.y,0,.2)
+			print("on Wall")
+			on_wall = true
+			if motion.y > 0:
+				motion.y = WALL_SLIDE_AMT
 			if Input.is_action_just_pressed("ui_up"):
 				motion.y = WALL_JUMP_HEIGHT
 				if jump_motion == "right":
 					motion.x = -600
 				else:
 					motion.x = 600
+
+		
+		
 	#Fireball Creation
 	if Input.is_action_just_pressed("ui_focus_next"):
 		var fireball = FIREBALL.instance()
 		get_parent().add_child(fireball)
 		fireball.position = $Position2D.global_position
-		fireball.SPEED = fireball.SPEED * -1
+		
 	motion = move_and_slide(motion, UP)
 
 	

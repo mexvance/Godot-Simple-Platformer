@@ -8,6 +8,7 @@ func _ready():
 	pass # Replace with function body.
 
 func _physics_process(delta):
+	emit_signal("speed", SPEED)
 	velocity.x = SPEED * delta
 	translate(velocity)
 	$AnimatedSprite.play("shoot")
