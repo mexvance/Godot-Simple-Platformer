@@ -16,11 +16,6 @@
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
-"frames": [ ExtResource( 11 ), ExtResource( 6 ) ],
-"loop": true,
-"name": "Jump",
-"speed": 7.0
-}, {
 "frames": [ ExtResource( 10 ) ],
 "loop": true,
 "name": "Idle",
@@ -30,6 +25,11 @@ animations = [ {
 "loop": true,
 "name": "Run",
 "speed": 10.0
+}, {
+"frames": [ ExtResource( 11 ), ExtResource( 6 ) ],
+"loop": true,
+"name": "Jump",
+"speed": 7.0
 }, {
 "frames": [ ExtResource( 1 ), ExtResource( 5 ) ],
 "loop": true,
@@ -69,3 +69,6 @@ motion_mirroring = Vector2( 640, 640 )
 texture = ExtResource( 13 )
 centered = false
 offset = Vector2( 0, -64 )
+
+[node name="Position2D" type="Position2D" parent="."]
+position = Vector2( 18.7343, 10.0636 )
