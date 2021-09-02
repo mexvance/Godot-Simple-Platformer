@@ -1,22 +1,57 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=21 format=2]
 
-[ext_resource path="res://icon.png" type="Texture" id=1]
-[ext_resource path="res://Area2D.gd" type="Script" id=2]
+[ext_resource path="res://Sprites/Enemy/B Flame 7.png" type="Texture" id=1]
+[ext_resource path="res://enemy.gd" type="Script" id=2]
+[ext_resource path="res://Sprites/Enemy/B Flame 3.png" type="Texture" id=3]
+[ext_resource path="res://Sprites/Enemy/B Flame 10.png" type="Texture" id=4]
+[ext_resource path="res://Sprites/Enemy/B Flame 8.png" type="Texture" id=5]
+[ext_resource path="res://Sprites/Enemy/B Flame 5.png" type="Texture" id=6]
+[ext_resource path="res://Sprites/Enemy/B Flame 1.png" type="Texture" id=7]
+[ext_resource path="res://Sprites/Enemy/B Flame 9.png" type="Texture" id=8]
+[ext_resource path="res://Sprites/Enemy/B Flame 6.png" type="Texture" id=9]
+[ext_resource path="res://Sprites/Enemy/B Flame 4.png" type="Texture" id=10]
+[ext_resource path="res://Sprites/Enemy/B Flame 11.png" type="Texture" id=11]
+[ext_resource path="res://Sprites/Enemy/B Flame 12.png" type="Texture" id=12]
+[ext_resource path="res://Sprites/Enemy/B Flame 2.png" type="Texture" id=13]
+[ext_resource path="res://Sprites/Enemy/Flame Death 4.png" type="Texture" id=14]
+[ext_resource path="res://Sprites/Enemy/Flame Death 2.png" type="Texture" id=15]
+[ext_resource path="res://Sprites/Enemy/Flame Death 3.png" type="Texture" id=16]
+[ext_resource path="res://Sprites/Enemy/Flame Death 5.png" type="Texture" id=17]
+[ext_resource path="res://Sprites/Enemy/Flame Death 6.png" type="Texture" id=18]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 32, 32 )
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 15 ), ExtResource( 16 ), ExtResource( 14 ), ExtResource( 17 ), ExtResource( 18 ) ],
+"loop": true,
+"name": "dead",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 7 ), ExtResource( 13 ), ExtResource( 3 ), ExtResource( 10 ), ExtResource( 6 ), ExtResource( 9 ), ExtResource( 1 ), ExtResource( 5 ), ExtResource( 8 ), ExtResource( 4 ), ExtResource( 11 ), ExtResource( 12 ) ],
+"loop": true,
+"name": "move",
+"speed": 5.0
+} ]
 
-[node name="Enemy" type="Area2D"]
+[sub_resource type="CircleShape2D" id=2]
+radius = 20.588
+
+[node name="Enemy" type="KinematicBody2D"]
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
 
-[node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 1 )
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+scale = Vector2( 0.125, 0.125 )
+frames = SubResource( 1 )
+animation = "dead"
+frame = 3
+playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+position = Vector2( 0, 4 )
+shape = SubResource( 2 )
 
-[connection signal="area_shape_entered" from="." to="." method="_on_Enemy_area_shape_entered"]
-[connection signal="body_entered" from="." to="." method="_on_Enemy_body_entered"]
+[node name="RayCast2D" type="RayCast2D" parent="."]
+position = Vector2( 16.9898, 0 )
+enabled = true
+cast_to = Vector2( 0, 25 )
+
+[connection signal="animation_finished" from="AnimatedSprite" to="." method="_on_AnimatedSprite_animation_finished"]

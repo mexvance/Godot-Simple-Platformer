@@ -3,6 +3,7 @@ extends Area2D
 const SPEED = 400
 var velocity = Vector2()
 var direction = 1
+var stopped = false
 
 func _ready():
 	pass # Replace with function body.
@@ -15,10 +16,11 @@ func set_fireball_direction(dir):
 		$AnimatedSprite.flip_h = false
 		
 func _physics_process(delta):
-	set_fireball_direction(direction)
-	velocity.x = SPEED * delta * direction
-	translate(velocity)
-	$AnimatedSprite.play("shoot")
+	if stopped == false:
+		set_fireball_direction(direction)
+		velocity.x = SPEED * delta * direction
+		translate(velocity)
+		$AnimatedSprite.play("shoot")
 
 
 
@@ -27,6 +29,17 @@ func _on_VisibilityNotifier2D_screen_exited():
 
 
 func _on_Fireball_body_entered(body):
+	velocity.x = 0
+	stopped = true
+	if body.name == "Enemy":
+		body.dead()
+	print(body.name)
+	if direction != 1:
+		$AnimatedSprite.flip_h = true
+	
+	$AnimatedSprite.play("explode")
+	yield($AnimatedSprite, "animation_finished")
+	print("after animation")
 	queue_free()
 
 
