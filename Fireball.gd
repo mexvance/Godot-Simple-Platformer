@@ -31,7 +31,7 @@ func _on_VisibilityNotifier2D_screen_exited():
 func _on_Fireball_body_entered(body):
 	velocity.x = 0
 	stopped = true
-	if body.name == "Enemy":
+	if body.name == "Enemy" or body.name == "Enemy2" or body.name == "Enemy3":
 		body.dead()
 	print(body.name)
 	if direction != 1:

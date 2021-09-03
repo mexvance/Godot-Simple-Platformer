@@ -4,7 +4,7 @@ const UP = Vector2(0,-1)
 const GRAVITY = 20
 const ACCELERATION = 50
 const MAX_SPEED = 200
-const JUMP_HEIGHT = -550
+const JUMP_HEIGHT = -570
 const WALL_JUMP_HEIGHT = -450
 const WALL_SLIDE_AMT = 50
 var motion = Vector2()
@@ -17,16 +17,11 @@ export(String, FILE, "*.tscn") var world_scene
 
 func _physics_process(delta):
 	
-	for i in get_slide_count():
-		var collision = get_slide_collision(i)
-		var spikes = get_parent().get_node("Spikes")
-		if collision.collider == spikes:
-			get_tree().reload_current_scene()
+	checkCollision()
+	
 	var friction = false
 	var on_wall = false
-	#Note that jump_motion is probably not the right way
-	#to handle the direction the wall is facing to set the "bounce"
-	#of the character off the wall, refactor?
+	var on_floor
 	var jump_motion = ""
 	
 	motion.y += GRAVITY	
@@ -35,36 +30,23 @@ func _physics_process(delta):
 		if Input.is_action_pressed("ui_right"):
 			if attacking == false:
 				direction = 1
-				$Sprite.flip_h = false
-				motion.x = min(motion.x + ACCELERATION,MAX_SPEED)
+				setHorizontalPhysics()
 				
-				if sign($Position2D.position.x) == -1:
-					$CollisionShape2D.position.x *= -1
-					$Position2D.position.x *= -1
-				$Sprite.play('Run')
 		elif Input.is_action_pressed("ui_left"):
 			if attacking == false:
 				direction = -1
-				$Sprite.flip_h = true
-				motion.x -= ACCELERATION
-				motion.x = max(motion.x - ACCELERATION,-MAX_SPEED)
-				if sign($Position2D.position.x) == 1:
-					$CollisionShape2D.position.x *= -1
-					$Position2D.position.x *= -1
-				$Sprite.play('Run')
+				setHorizontalPhysics()
+				
 		else:
 			friction = true
 			if attacking == false:
 				$Sprite.play('Idle')
+				
+				
 		if is_on_floor():
-			if Input.is_action_just_pressed("ui_up"):
-				if attacking == false:
-					motion.y = JUMP_HEIGHT
-			if friction == true:
-				motion.x = lerp(motion.x,0,.2)
+			on_floor = true
+	
 		else:
-			#if Input.is_action_just_pressed("ui_up"):
-			#	motion.y = JUMP_HEIGHT
 			if attacking == false:
 				if motion.y < 0:
 					$Sprite.play('Jump')
@@ -74,17 +56,15 @@ func _physics_process(delta):
 				motion.x = lerp(motion.x,0,.05)
 				
 			if is_on_wall():
-				print("on Wall")
 				on_wall = true
-				if motion.y > 0:
-					motion.y = WALL_SLIDE_AMT
-				if Input.is_action_just_pressed("ui_up"):
-					motion.y = WALL_JUMP_HEIGHT
-					if direction == 1:
-						motion.x = -600
-					else:
-						motion.x = 600			
-						
+				
+		if attacking == false:
+			var motionvar = calculateJump(on_wall, on_floor, motion)
+			if motionvar != null:
+				motion.x = motionvar.x
+				motion.y = motionvar.y
+		if friction == true:
+			motion.x = lerp(motion.x,0,.2)			
 		#Fireball Creation
 		if Input.is_action_just_pressed("ui_focus_next") && attacking == false && on_wall == false:
 			attacking = true
@@ -97,17 +77,50 @@ func _physics_process(delta):
 			get_parent().add_child(fireball)
 			fireball.position = $Position2D.global_position
 			
-		
-
-		if get_slide_count() > 0:
-			for i in range(get_slide_count()):
-				if "Enemy" in get_slide_collision(i).collider.name:
-					dead()		
+	
 	motion = move_and_slide(motion, UP)		
+func calculateJump(on_wall, on_floor, motion):
+	if on_wall:
+		if motion.y > 0:
+			motion.y = WALL_SLIDE_AMT
+			
+	if Input.is_action_just_pressed("ui_up"):
+		if on_wall:
+			motion.y = WALL_JUMP_HEIGHT
+			if direction == 1:
+				motion.x = -600
+			else:
+				motion.x = 600	
+		elif on_floor:
+			motion.y = JUMP_HEIGHT
+			
+	return motion
+		
+func setHorizontalPhysics():
+	if direction == 1:
+		$Sprite.flip_h = false
+		motion.x = min(motion.x + ACCELERATION*direction,MAX_SPEED*direction)
+	else:
+		$Sprite.flip_h = true
+		motion.x = max(motion.x + ACCELERATION*direction,MAX_SPEED*direction)
+	if sign($Position2D.position.x) == -direction:
+		$CollisionShape2D.position.x *= -1
+		$Position2D.position.x *= -1
+	$Sprite.play('Run')
+	
+func checkCollision():
+	if get_slide_count() > 0:
+		for i in range(get_slide_count()):
+			var collider = get_slide_collision(i).collider.name
+			if "Spikes" == collider or "Enemy" == collider or "Enemy2" == collider or "Enemy3" == collider:
+				dead()		
 
 func dead():
 	is_dead = true
-	motion.x = 0
+	motion = Vector2(0,0)
+	add_collision_exception_with(get_parent().get_node("Enemy"))
+	add_collision_exception_with(get_parent().get_node("Enemy2"))
+	add_collision_exception_with(get_parent().get_node("Enemy3"))
 	$Sprite.play("Death")
 	$Timer.start()
 	
