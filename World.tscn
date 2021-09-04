@@ -8,9 +8,6 @@
 
 [node name="World" type="Node"]
 
-[node name="Enemy2" parent="." instance=ExtResource( 4 )]
-position = Vector2( 336, 240 )
-
 [node name="Player" parent="." instance=ExtResource( 1 )]
 position = Vector2( 96, 265.6 )
 world_scene = "res://World2.tscn"
@@ -29,10 +26,15 @@ cell_size = Vector2( 16, 16 )
 format = 1
 tile_data = PoolIntArray( -65428, 2, 0, 108, 2, 0, 65644, 2, 0, 131180, 2, 0, 196716, 2, 0, 458824, 1, 0, 458825, 1, 0, 458826, 1, 0, 458827, 1, 0, 655475, 4, 0, 721011, 4, 0, 786547, 4, 0, 852083, 4, 0 )
 
-[node name="Enemy" parent="." instance=ExtResource( 4 )]
+[node name="Enemy" type="Node" parent="."]
+
+[node name="Enemy" parent="Enemy" instance=ExtResource( 4 )]
 position = Vector2( 560, 112 )
 
-[node name="Enemy3" parent="." instance=ExtResource( 4 )]
+[node name="Enemy2" parent="Enemy" instance=ExtResource( 4 )]
+position = Vector2( 336, 240 )
+
+[node name="Enemy3" parent="Enemy" instance=ExtResource( 4 )]
 position = Vector2( 880, -16 )
 
 [connection signal="body_entered" from="Checkpoint" to="Player" method="_on_Checkpoint_body_entered"]

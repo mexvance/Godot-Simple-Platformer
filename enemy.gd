@@ -15,7 +15,7 @@ func ready():
 func dead():
 	is_dead = true
 	velocity = Vector2(0,0)
-	add_collision_exception_with(get_parent().get_node("Player"))
+	add_collision_exception_with(get_parent().get_parent().get_node("Player"))
 	$AnimatedSprite.play("dead")
 	yield($AnimatedSprite, "animation_finished")
 	queue_free()
