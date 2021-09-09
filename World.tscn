@@ -10,6 +10,7 @@
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 position = Vector2( 96, 265.6 )
+input_pickable = true
 world_scene = "res://World2.tscn"
 
 [node name="Checkpoint" parent="." instance=ExtResource( 2 )]

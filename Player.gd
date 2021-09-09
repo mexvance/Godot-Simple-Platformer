@@ -14,6 +14,7 @@ var direction = 1
 var is_dead = false
 var set_frame = -1
 var finished = false
+var drag_speed = 100
 
 const FIREBALL = preload("res://Fireball.tscn")
 export(String, FILE, "*.tscn") var world_scene
@@ -26,10 +27,20 @@ func _physics_process(delta):
 	var on_wall = false
 	var on_floor
 	var jump_motion = ""
+	var is_dragging = false
 	
 	motion.y += GRAVITY	
 	if is_dead == false:
 			
+#		if Input.is_mouse_button_pressed(1):
+#
+#			var new_position = get_global_mouse_position()
+#			position = new_position;
+#			motion.y = 0
+#			friction = 0
+			
+			
+		#if is_dragging == false:
 		if Input.is_action_pressed("ui_right"):
 			if attacking == false:
 				direction = 1
@@ -154,4 +165,6 @@ func _on_Sprite_frame_changed():
 	set_frame += 1
 	if(set_frame == 7):
 		finished = true
+		
+
 
